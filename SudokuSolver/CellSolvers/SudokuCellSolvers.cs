@@ -2,15 +2,18 @@
 {
     public abstract class SudokuCellSolvers
     {
-        public char[,] Board { get; }
+        public SudokuCell[][] Board { get; }
         public int Size { get; }
+        public char[] Values { get; }
 
-        public SudokuCellSolvers(char[,] board, int size)
+        public SudokuCellSolvers(Sudoku puzzle)
         {
-            Board = board;
-            Size = size;
+            Board = puzzle.Board;
+            Size = puzzle.Size;
+            Values = puzzle.Values;
+            
         }
-
-        public abstract bool Solve();
+        public abstract void Solve();
+        
     }
 }

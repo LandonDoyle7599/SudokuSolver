@@ -39,17 +39,25 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="CellSolvers\AssignPossibleValues.cs" />
         <Compile Include="CellSolvers\BruteForce.cs" />
-        <Compile Include="CellSolvers\DoubleCell.cs" />
-        <Compile Include="CellSolvers\ReaderWriter.cs" />
-        <Compile Include="CellSolvers\SingleCell.cs" />
+        <Compile Include="CellSolvers\HiddenPairsSolver.cs" />
+        <Compile Include="CellSolvers\HiddenSingles.cs" />
+        <Compile Include="CellSolvers\NakedPairsSolver.cs" />
+        <Compile Include="CellSolvers\NakedSingleSolver.cs" />
         <Compile Include="CellSolvers\Solver.cs" />
         <Compile Include="CellSolvers\SudokuCellSolvers.cs" />
+        <Compile Include="CellSolvers\XWingSolver.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="ReaderWriter.cs" />
         <Compile Include="Sudoku.cs" />
+        <Compile Include="SudokuCell.cs" />
     </ItemGroup>
     <ItemGroup>
+      <Content Include="Documentation\Sudoku Bad Input Interaction Diagram.pdf" />
+      <Content Include="Documentation\Sudoku Class Diagram.pdf" />
+      <Content Include="Documentation\Sudoku Good Input Interaction Diagram.pdf" />
       <Content Include="Puzzles\Puzzle-16x16-0001.txt" />
       <Content Include="Puzzles\Puzzle-16x16-0002.txt" />
       <Content Include="Puzzles\Puzzle-16x16-0101.txt" />
@@ -93,6 +101,7 @@
       <Content Include="Puzzles\Puzzle-9x9-0302.txt" />
       <Content Include="Puzzles\Puzzle-9x9-0401.txt" />
       <Content Include="Puzzles\Puzzle-9x9-0901.txt" />
+      <Content Include="README.md" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

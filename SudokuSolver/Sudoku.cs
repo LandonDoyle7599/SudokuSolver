@@ -1,112 +1,185 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace SudokuSolver
 {
     public class Sudoku
     {
-        private readonly char[][] _board;
-        private readonly int _size;
+        public SudokuCell[][] Board { get; set; }
+        public int Size { get; set; }
+        public char[] Values { get; set; }
 
         public Sudoku(string[] lines)
         {
-            _size = int.Parse(lines[0]);
-            _board = new char[_size][];
-            for (var i = 0; i < _size; i++)
+            if (!ValidateInput(lines))
             {
-                _board[i] = new char[_size];
+                Console.WriteLine("Puzzle input isn't structured correctly, try again.");
+                Environment.Exit(0);
             }
-            for (var i = 2; i < _size+2; i++)
+            for(var i = 0; i < lines.Length; i++)
             {
-                var line = lines[i];
-                var split = line.Split(' ');
-                for (var j = 0; j < _size; j++)
-                {
-                    _board[i-2][j] = split[j][0];
-                }
+                lines[i] = Regex.Replace(lines[i], @"\s+", string.Empty);
             }
-        }
-
-      //solution function, empty cells are marked with -
-        public bool Solve()
-        {
-            for (var i = 0; i < _size; i++)
+            Values = lines[1].ToCharArray();
+            Size = int.Parse(lines[0]);
+            Board = new SudokuCell[Size][];
+            for (var i = 0; i < Size; i++)
             {
-                for (var j = 0; j < _size; j++)
+                Board[i] = new SudokuCell[Size];
+            }
+            for (var i = 0; i < Size; i++)
+            {
+                for (var j = 0; j < Size; j++)
                 {
-                    if (_board[i][j] == '-')
-                    {
-                        for (var k = 1; k <= _size; k++)
-                        {
-                            _board[i][j] = (char)(k + '0');
-                            if (IsValid(i, j) && Solve())
-                            {
-                                return true;
-                            }
-
-                            _board[i][j] = '-';
-                        }
-
-                        return false;
-                    }
+                    Board[i][j] = new SudokuCell(lines[i + 2][j], i, j);
                 }
             }
 
-            return true;
+            if (!CheckIfValid())
+            {
+                Console.WriteLine("Invalid Puzzle, try again.");
+                Environment.Exit(0);
+            }
         }
         
-private bool IsValid(int row, int col)
-        {
-            for (var i = 0; i < _size; i++)
-            {
-                if (i != col && _board[row][i] == _board[row][col])
-                {
-                    return false;
-                }
-            }
-
-            for (var i = 0; i < _size; i++)
-            {
-                if (i != row && _board[i][col] == _board[row][col])
-                {
-                    return false;
-                }
-            }
-
-            var rowStart = (row / 3) * 3;
-            var colStart = (col / 3) * 3;
-            for (var i = rowStart; i < rowStart + 3; i++)
-            {
-                for (var j = colStart; j < colStart + 3; j++)
-                {
-                    if (i != row && j != col && _board[i][j] == _board[row][col])
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
+        
         public override string ToString()
         {
             var result = "";
-            for (var i = 0; i < _size; i++)
+            result += Size + "\n";
+            for (var i = 0; i < Size; i++)
             {
-                for (var j = 0; j < _size; j++)
+                for (var j = 0; j < Size; j++)
                 {
-                    result += _board[i][j];
+                    result += Board[i][j].Value;
                 }
 
-                result += "\r";
+                result += "\n";
             }
 
             return result;
         }
         
-        public void Save(string path)
+        public string[] ToArray()
         {
-            System.IO.File.WriteAllText(path, ToString());
+            var result = new string[Size + 2];
+            result[0] = "Size: " + Size + "x" + Size;
+            result[1] = "Solved";
+            for (var i = 0; i < Size; i++)
+            {
+                result[i + 2] = " ";
+                for (var j = 0; j < Size; j++)
+                {
+                    result[i + 2] += Board[i][j].Value;
+                    result[i+2] += " ";
+                }
+
+                result[i+2]=result[i + 2].Trim();
+            }
+
+            return result;
+        }
+
+        public bool CheckIfValid()
+        {
+            var valid = true;
+            for (var i = 0; i < Size; i++)
+            {
+                var row = new List<char>();
+                var column = new List<char>();
+                for (var j = 0; j < Size; j++)
+                {
+                    row.Add(Board[i][j].Value);
+                    column.Add(Board[j][i].Value);
+                }
+
+                if (row.Count != row.Distinct().Count() + (row.Count(s => s == '-') > 0 ? row.Count(s => s == '-') - 1 : 0))
+                {
+                    valid = false;
+                }
+
+                if (column.Count != column.Distinct().Count() + (column.Count(s => s == '-') > 0 ? column.Count(s => s == '-') - 1 : 0))
+                {
+                    valid = false;
+                }
+            }
+
+            var boxSize = (int)Math.Sqrt(Size);
+            for (var i = 0; i < boxSize; i++)
+            {
+                for (var j = 0; j < boxSize; j++)
+                {
+                    var box = new List<char>();
+                    for (var m = 0; m < boxSize; m++)
+                    {
+                        for (var n = 0; n < boxSize; n++)
+                        {
+                            box.Add(Board[i * boxSize + m][j * boxSize + n].Value);
+                        }
+                    }
+
+                    if (box.Count != box.Distinct().Count() + (box.Count(s => s == '-') > 0 ? box.Count(s => s == '-') - 1 : 0))
+                    {
+                        valid = false;
+                    }
+                }
+            }
+
+            return valid;
+        }
+        
+        public static bool ValidateInput(string[] input)
+        {
+            int size;
+            if (!int.TryParse(input[0], out size))
+            {
+                return false;
+            }
+            input = Array.FindAll(input, s => !string.IsNullOrWhiteSpace(s));
+
+            int sqrt = (int)Math.Sqrt(size);
+            if (sqrt * sqrt != size)
+            {
+                return false;
+            }
+
+            string[] possibleValues = input[1].Split(' ');
+            if (possibleValues.Length != size)
+            {
+                return false;
+            }
+
+            HashSet<string> set = new HashSet<string>(possibleValues);
+            if (set.Count != size)
+            {
+                return false;
+            }
+
+            if (input.Length != size + 2)
+            {
+                return false;
+            }
+
+            for (int i = 2; i < input.Length; i++)
+            {
+                string[] row = input[i].Split(' ');
+                if (row.Length != size)
+                {
+                    return false;
+                }
+
+                foreach (string val in row)
+                {
+                    if (!set.Contains(val) && val != "-")
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }

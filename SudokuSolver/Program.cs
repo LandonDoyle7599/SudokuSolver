@@ -9,17 +9,18 @@ namespace SudokuSolver
             Console.WriteLine("Welcome to my Sudoku Solver!");
             var reader = new ReaderWriter();
             var sudoku = new Sudoku(reader.Read());
-            if (sudoku.Solve())
+            var solver = new Solver(sudoku);
+            var result = solver.Solve();
+            if (result)
             {
-                Console.WriteLine("Solved!");
-            }else
-            {
-                Console.WriteLine("No solution found!");
+                Console.WriteLine("Solution found!");
+                Console.WriteLine(sudoku.ToString());
+                reader.Write(sudoku);
             }
-            Console.WriteLine(sudoku);
-            Console.WriteLine("Please enter the path you want to save the solved puzzle to:");
-            path = Console.ReadLine();
-            sudoku.Save(path);
+            else
+            {
+                Console.WriteLine("No solution found, puzzle unsolvable.");
+            }
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }

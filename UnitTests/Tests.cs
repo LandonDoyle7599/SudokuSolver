@@ -1,12 +1,12 @@
 ﻿using System;
+using NUnit.Framework;
 using SudokuSolver;
-using Xunit;
 
-namespace Tests
+namespace UnitTests
 {
     public class Tests
     {
-        [Fact]
+        [Test]
         public void ValidSudokuInput_ReturnsTrue()
         {
             // Arrange
@@ -27,7 +27,7 @@ namespace Tests
             Assert.True(result);
         }
 
-        [Fact]
+        [Test]
         public void InvalidSudokuInput_ReturnsFalse()
         {
             // Arrange
@@ -164,7 +164,7 @@ namespace Tests
 
 
 
-        [Fact]
+        [Test]
         public void TestBruteForce()
         {
             Sudoku puzzle = new Sudoku(_puzzleInput2);
@@ -176,7 +176,7 @@ namespace Tests
             Assert.True(solver2.CheckIfSolved());
         }
 
-        [Fact]
+        [Test]
         public void TestNakedSingleSolver()
         {
             Sudoku puzzle = new Sudoku(_puzzleInput1);
@@ -190,7 +190,7 @@ namespace Tests
             Assert.True(solver2.CheckIfSolved());
         }
 
-        [Fact]
+        [Test]
         public void TestHiddenSinglesSolver()
         {
             Sudoku puzzle = new Sudoku(_puzzleInput3);
@@ -204,7 +204,7 @@ namespace Tests
             Assert.True(solver2.CheckIfSolved());
         }
 
-        [Fact]
+        [Test]
         public void TestNakenHiddenPairsSolver()
         {
             Sudoku puzzle = new Sudoku(_puzzleInput4);
@@ -220,7 +220,7 @@ namespace Tests
             Assert.True(solver3.CheckIfSolved());
         }
 
-        [Fact]
+        [Test]
         public void TestEntireSolver()
         {
             Sudoku puzzle = new Sudoku(_puzzleInput5);
@@ -230,7 +230,7 @@ namespace Tests
             Assert.True(solver.CheckIfSolved());
         }
 
-        [Fact]
+        [Test]
         public void TestCheckIfSolved()
         {
             Sudoku puzzle = new Sudoku(solvedPuzzle);
